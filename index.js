@@ -17,7 +17,7 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-console.log(uri);
+
 /* 
 function verifyJWT(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -59,7 +59,7 @@ async function run() {
       const products = await cursor.toArray();
       res.send(products);
     });
-
+    /////////////////////// Reviews Start //////////////////////
     //**GET Reviews */
     app.get("/reviews", async (req, res) => {
       const query = {};
@@ -75,7 +75,35 @@ async function run() {
       const result = await reviewsCollection.insertOne(review);
       res.send(result);
     });
-
+    /////////////////////// Reviews End //////////////////////
+    /////////////////////// ORDERS Start //////////////////////
+    //**get Orders */
+    app.get("/orders", async (req, res) => {
+      const query = {};
+      const cursor = ordersCollection.find(query);
+      const orders = await cursor.toArray();
+      res.send(orders);
+    });
+    //**post Orders */
+    app.post("/orders", async (req, res) => {
+      const review = req.body;
+      const result = await ordersCollection.insertOne(review);
+      res.send(result);
+    });
+    // ** My  Orders*/
+    app.get("/myOrders", async (req, res) => {
+      // const decodedEmail = req.decoded?.email;
+      const email = req.query.email;
+      // if (email === decodedEmail) {
+      const query = { email };
+      const cursor = ordersCollection.find(query);
+      const myOrders = await cursor.toArray();
+      res.send(myOrders);
+      // } else{
+      // res.status(403).send({message: 'forbidden access'})
+      // }
+    });
+    /////////////////////// ORDERS Finish //////////////////////
     //**GET A Specific Product */
 
     app.get("/product/:id", async (req, res) => {
@@ -83,13 +111,6 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const product = await productsCollection.findOne(query);
       res.send(product);
-
-      //**Create Orders */
-      /* 
-      app.post("/orders", async (req, res) => {
-        const orders = req.body;
-        const query = 
-      }); */
 
       //* Getting Users  */
       /*   app.get("/user", async (req, res) => {
