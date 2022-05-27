@@ -17,7 +17,8 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-
+console.log(uri);
+/* 
 function verifyJWT(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -32,27 +33,91 @@ function verifyJWT(req, res, next) {
     next();
   });
 }
+ */
 async function run() {
   try {
     await client.connect();
-    console.log("Connected to Manufacturer DB");
     const productsCollection = client
       .db("sparrow-manufacturer")
       .collection("products");
+    const ordersCollection = client
+      .db("sparrow-manufacturer")
+      .collection("orders");
+    const reviewsCollection = client
+      .db("sparrow-manufacturer")
+      .collection("reviews");
+
+    const userCollection = client
+      .db("sparrow-manufacturer")
+      .collection("users");
 
     //**GET Products Tools */
+
     app.get("/products", async (req, res) => {
       const query = {};
       const cursor = productsCollection.find(query);
       const products = await cursor.toArray();
       res.send(products);
     });
+
+    //**GET Reviews */
+    app.get("/reviews", async (req, res) => {
+      const query = {};
+      const cursor = reviewsCollection.find(query);
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
+    //**post Reviews */
+
+    app.post("/reviews", async (req, res) => {
+      const review = req.body;
+      const result = await reviewsCollection.insertOne(review);
+      res.send(result);
+    });
+
     //**GET A Specific Product */
+
     app.get("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const product = await productsCollection.findOne(query);
       res.send(product);
+
+      //**Create Orders */
+      /* 
+      app.post("/orders", async (req, res) => {
+        const orders = req.body;
+        const query = 
+      }); */
+
+      //* Getting Users  */
+      /*   app.get("/user", async (req, res) => {
+        const users = await userCollection.find().toArray();
+        res.send(users);
+      }); */
+
+      //**Creating Users */
+      /* 
+      app.put("/user/:email", async (req, res) => {
+        const email = req.params.email;
+        const user = req.body;
+        console.log(user);
+        const filter = { email: email };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: user,
+        };
+        const result = await userCollection.updateOne(
+          filter,
+          updateDoc,
+          options
+        );
+        const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, {
+          expiresIn: "1h",
+        });
+        res.send(result, token);
+      }); */
     });
   } finally {
   }
