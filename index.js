@@ -8,6 +8,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 //middleware
+
 app.use(cors());
 /* app.use(
   cors({
@@ -16,6 +17,7 @@ app.use(cors());
     credentials: true,
   })
 ); */
+
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.4vm44.mongodb.net/?retryWrites=true&w=majority`;
@@ -119,6 +121,7 @@ async function run() {
       res.send(result);
     });
     /////////////////////// Reviews End //////////////////////
+
     /////////////////////// ORDERS Start //////////////////////
     //**get Orders */
     app.get("/orders", async (req, res) => {
@@ -168,13 +171,16 @@ async function run() {
     });
 
     // ** Delete myOrders From DB*/
+
     app.delete("/myOrders/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const result = await ordersCollection.deleteOne(filter);
       res.send(result);
     });
+
     // ** Delete orders From DB by Admin*/
+
     app.delete("/orders/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
