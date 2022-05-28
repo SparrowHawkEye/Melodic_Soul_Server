@@ -186,7 +186,7 @@ async function run() {
     /////////////////////// ORDERS Finish //////////////////////
     //**GET A Specific Product */
 
-    app.get("/product/:id", verifyJWT, async (req, res) => {
+    app.get("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const product = await productsCollection.findOne(query);
