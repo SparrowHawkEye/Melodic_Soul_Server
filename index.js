@@ -126,6 +126,23 @@ async function run() {
       // res.status(403).send({ message: "forbidden access" });
       // }
     });
+
+    // ** Delete myOrders From DB*/
+    app.delete("/myOrders/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await ordersCollection.deleteOne(filter);
+      res.send(result);
+    });
+    // ** Delete orders From DB by Admin*/
+    app.delete("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await ordersCollection.deleteOne(filter);
+
+      res.send(result);
+    });
+
     /////////////////////// ORDERS Finish //////////////////////
     //**GET A Specific Product */
 
@@ -175,7 +192,7 @@ async function run() {
       res.send({ admin: isAdmin });
     });
 
-    app.put("/user/admin/:email", verifyJWT, verifyAdmin, async (req, res) => {
+    app.put("/users/admin/:email", async (req, res) => {
       const email = req.params.email;
       const filter = { email: email };
       const updateDoc = {
