@@ -55,6 +55,9 @@ async function run() {
     const paymentsCollection = client
       .db("sparrow-manufacturer")
       .collection("payments");
+    const userCollection = client
+      .db("sparrow-manufacturer")
+      .collection("users");
 
     //**Verify Admin */
 
@@ -153,8 +156,8 @@ async function run() {
         filter,
         updatedDoc
       );
-      const result = await paymentsCollection.insertOne(payment)
-      res.send(updatedOrders)
+      const result = await paymentsCollection.insertOne(payment);
+      res.send(updatedOrders);
     });
 
     app.get("/orders/:id", async (req, res) => {
@@ -190,12 +193,9 @@ async function run() {
       res.send(product);
     });
     //**>> Users Collection << */
-    const userCollection = client
-      .db("sparrow-manufacturer")
-      .collection("users");
 
     //* Getting Users  */
-    app.get("/users", verifyJWT, verifyAdmin, async (req, res) => {
+    app.get("/users", async (req, res) => {
       const users = await userCollection.find().toArray();
       res.send(users);
     });
