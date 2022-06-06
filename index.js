@@ -3,9 +3,10 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const app = express();
 const port = process.env.PORT || 5000;
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 //middleware
 
@@ -54,12 +55,14 @@ async function run() {
     const reviewsCollection = client
       .db("sparrow-manufacturer")
       .collection("reviews");
-    const paymentsCollection = client
-      .db("sparrow-manufacturer")
-      .collection("payments");
     const userCollection = client
       .db("sparrow-manufacturer")
       .collection("users");
+
+ // ** Payment Collection*/
+    const paymentsCollection = client
+      .db("sparrow-manufacturer")
+      .collection("payments");
 
     //**Verify Admin */
 
@@ -144,6 +147,20 @@ async function run() {
       const myOrders = await cursor.toArray();
       res.send(myOrders);
     });
+
+    //** Update User Profile */
+
+    app.put("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email };
+      const updateDoc = {
+        $set: data,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+    // ** Payment PATCH*/
 
     app.patch("/orders/:id", async (req, res) => {
       const id = req.params.id;
