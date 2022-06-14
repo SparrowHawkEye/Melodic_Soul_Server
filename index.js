@@ -152,13 +152,32 @@ async function run() {
 
     app.put("/users/:email", async (req, res) => {
       const email = req.params.email;
+      const data = req.body;
       const filter = { email: email };
       const updateDoc = {
         $set: data,
       };
-      const result = await userCollection.updateOne(filter, updateDoc);
-      res.send(result);
+      const updateProfile = await userCollection.updateOne(filter, updateDoc);
+      res.send(updateProfile);
     });
+
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const userProfile = await userCollection.findOne({ email: email });
+      res.send(userProfile);
+    });
+    /* app.put("/profiles/:email", async (req, res) => {
+      const email = req.params.email;
+      const profile = req.body;
+      console.log(profile);
+      const filter = { email: email };
+      const updatedDoc = {
+        $set: profile,
+      };
+      const updatedProfile = await userCollection.updateOne(filter, updatedDoc);
+      console.log(updatedProfile);
+      res.send(updatedProfile);
+    }); */
 
     // ** Payment PATCH*/
 
