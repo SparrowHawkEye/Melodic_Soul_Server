@@ -154,10 +154,11 @@ async function run() {
       const email = req.params.email;
       const data = req.body;
       const filter = { email: email };
+      const options = { upsert: true };
       const updateDoc = {
         $set: data,
       };
-      const updateProfile = await userCollection.updateOne(filter, updateDoc);
+      const updateProfile = await userCollection.updateOne(filter, updateDoc, options);
       res.send(updateProfile);
     });
 
@@ -166,18 +167,7 @@ async function run() {
       const userProfile = await userCollection.findOne({ email: email });
       res.send(userProfile);
     });
-    /* app.put("/profiles/:email", async (req, res) => {
-      const email = req.params.email;
-      const profile = req.body;
-      console.log(profile);
-      const filter = { email: email };
-      const updatedDoc = {
-        $set: profile,
-      };
-      const updatedProfile = await userCollection.updateOne(filter, updatedDoc);
-      console.log(updatedProfile);
-      res.send(updatedProfile);
-    }); */
+
 
     // ** Payment PATCH*/
 
